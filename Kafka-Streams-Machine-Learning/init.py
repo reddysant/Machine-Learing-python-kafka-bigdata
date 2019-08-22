@@ -9,7 +9,7 @@ from keras.layers import Dense
 from keras.layers import Dropout
 
 
-path = Path('C:/*/Machine-Learing-python-kafka-bigdata')
+path = Path('C:/Santhosh/AIML/Github/Machine-Learing-python-kafka-bigdata')
 
 def download_data():
     print("downloading training data...");
@@ -94,7 +94,7 @@ def create_model(df):
 
     # Model check point
     from keras.callbacks import ModelCheckpoint
-    _mc_model_location = 'v1_model.h5'
+    _mc_model_location = 'models/model.h5'
     _mc_monitor = 'val_acc'
     mc = ModelCheckpoint(_mc_model_location, monitor=_mc_monitor, mode='max', verbose=1, save_best_only=True)
     _epochs = 1000
@@ -106,7 +106,4 @@ def create_model(df):
 # download_data();
 df = pre_process_data(path/'data/train/train.csv')
 create_model(df)
-
-
-
 print('Exit.')
