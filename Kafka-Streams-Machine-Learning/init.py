@@ -8,7 +8,7 @@ from utils.download_data import download_data
 
 path = Path('C:/Santhosh/AIML/Github/Machine-Learing-python-kafka-bigdata')
 
-download_data(path);
+# download_data(path);
 df = pre_process_data(path/'data/train/train.csv')
 create_model(df)
 print('Exit.')

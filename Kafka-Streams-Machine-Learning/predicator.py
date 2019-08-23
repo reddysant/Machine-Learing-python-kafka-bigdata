@@ -1,11 +1,8 @@
-import json
-import pandas as pd
-import pickle
-
 from pathlib import Path
 from kafka import KafkaConsumer
 from keras.models import load_model
-
+from utils.pre_processor import pre_process_data
+import numpy as np
 
 KAFKA_HOST = 'localhost:9092'
 TOPICS = ['app_messages', 'retrain_topic']
@@ -16,15 +13,24 @@ def reload_model(path):
 	print(path)
 	return load_model(path)
 
+def predict(model, row):
+	# Convert to 2 dimentional if it 1D
+	if (row.ndim == 1):
+		row = np.array([row])
 
-def predict(m, row):
+	# predict(model,single_row);
+	model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+	result = model.predict(row)
+	return result;
 
-	print('exit')
 
 model = reload_model(str(MODEL_PATH));
-testData = pd.read_csv(PATH/'data/test/test.csv');
+df_test = pre_process_data(PATH/'data/test/test.csv')
 
+df_train_x = df_test.drop(['income_label'], axis=1);
+df_train_y = df_test[['income_label']];
 
+row = np.array(list(df_train_x.iloc[0, 0:14].values))
+result = predict(model, row)
 
-# predict(model, row);
-print('exit')
+print("Predicted value: ", result)
