@@ -1,9 +1,12 @@
 from pathlib import Path
-from kafka import KafkaConsumer
+from kafka import KafkaProducer
 from keras.models import load_model
 from utils.pre_processor import pre_process_data
 import numpy as np
+from time import sleep
+from json import dumps
 
+topic = 'GET_PREDECTIONS'
 KAFKA_HOST = 'localhost:9092'
 TOPICS = ['app_messages', 'retrain_topic']
 PATH = Path('C:/Santhosh/AIML/Github/Machine-Learing-python-kafka-bigdata/')
@@ -30,7 +33,20 @@ df_test = pre_process_data(PATH/'data/test/test.csv')
 df_train_x = df_test.drop(['income_label'], axis=1);
 df_train_y = df_test[['income_label']];
 
+print(df_train_y.iloc[0].values)
+
 row = np.array(list(df_train_x.iloc[0, 0:14].values))
 result = predict(model, row)
+print("Predicted value: ", result);
 
-print("Predicted value: ", result)
+producer = KafkaProducer(bootstrap_servers=['localhost:9092'],
+                         value_serializer=lambda x:
+                         dumps(x).encode('utf-8'))
+
+# Send data
+sleep(5)
+data = {'number' : 1}
+producer.send('numtest', value=data)
+print('result', ' sent.')
+
+print('Exit')
