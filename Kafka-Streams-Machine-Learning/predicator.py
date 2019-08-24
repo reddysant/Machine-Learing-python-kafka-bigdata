@@ -38,15 +38,8 @@ print(df_train_y.iloc[0].values)
 row = np.array(list(df_train_x.iloc[0, 0:14].values))
 result = predict(model, row)
 print("Predicted value: ", result);
-
-producer = KafkaProducer(bootstrap_servers=['localhost:9092'],
-                         value_serializer=lambda x:
-                         dumps(x).encode('utf-8'))
-
-# Send data
+producer = KafkaProducer(bootstrap_servers='localhost:9092')
+producer.send('PREDICTED_VALUE', bytes(str(result[0][0]), 'utf-8'))
 sleep(5)
-data = {'number' : 1}
-producer.send('numtest', value=data)
-print('result', ' sent.')
 
 print('Exit')
