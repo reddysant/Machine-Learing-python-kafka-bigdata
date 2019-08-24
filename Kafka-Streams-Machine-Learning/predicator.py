@@ -33,13 +33,15 @@ df_test = pre_process_data(PATH/'data/test/test.csv')
 df_train_x = df_test.drop(['income_label'], axis=1);
 df_train_y = df_test[['income_label']];
 
-print(df_train_y.iloc[0].values)
+test_data_size = df_train_x.shape[0]
+print(test_data_size)
 
-row = np.array(list(df_train_x.iloc[0, 0:14].values))
-result = predict(model, row)
-print("Predicted value: ", result);
-producer = KafkaProducer(bootstrap_servers='localhost:9092')
-producer.send('PREDICTED_VALUE', bytes(str(result[0][0]), 'utf-8'))
-sleep(5)
+for i in range(test_data_size):
+	row = np.array(list(df_train_x.iloc[i, 0:14].values))
+	result = predict(model, row)
+	print("Predicted value: ", result);
+	producer = KafkaProducer(bootstrap_servers='localhost:9092')
+	producer.send('PREDICTED_VALUE', bytes(str(result[0][0]), 'utf-8'))
+	sleep(2)
 
 print('Exit')
